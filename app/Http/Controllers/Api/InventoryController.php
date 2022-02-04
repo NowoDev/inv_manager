@@ -83,13 +83,32 @@ class InventoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Inventory $inventory
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Inventory $inventory
+     * @return JsonResponse|InventoryResource
      */
-    public function update(Request $request, Inventory $inventory)
+    public function update(Request $request, Inventory $inventory): JsonResponse|InventoryResource
     {
-        //
+        $input = $request->all();
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:inventories,name',
+            'price' => 'integer|required',
+            'quantity' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status_code' => 401,
+                'message' => 'Error Validation',
+                'data' => [
+                    $validator->errors()
+                ],
+            ]);
+        }
+
+        $inventory->update($input);
+
+        return new InventoryResource($inventory);
     }
 
     /**
