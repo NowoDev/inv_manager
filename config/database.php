@@ -2,12 +2,37 @@
 
 use Illuminate\Support\Str;
 
-$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
-$host = $url["host"];
-$username = $url["user"];
-$password = $url["pass"];
-$database = substr($url["path"], 1);
+if (env('APP_ENV') === 'production') {
+    $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+    $data = [
+        'driver' => 'mysql',
+        'host' => $url["host"],
+        'username' => $url["user"],
+        'password' => $url["pass"],
+        'database' => substr($url["path"], 1),
+    ];
+} else {
+    $data = [
+        'driver' => 'mysql',
+        'url' => env('DATABASE_URL'),
+        'host' => env('DB_HOST', '127.0.0.1'),
+        'username' => env('DB_USERNAME', 'forge'),
+        'database' => env('DB_DATABASE', 'forge'),
+        'password' => env('DB_PASSWORD', ''),
+        'port' => env('DB_PORT', '3306'),
+        'unix_socket' => env('DB_SOCKET', ''),
+        'charset' => 'utf8mb4',
+        'collation' => 'utf8mb4_unicode_ci',
+        'prefix' => '',
+        'prefix_indexes' => true,
+        'strict' => true,
+        'engine' => null,
+        'options' => extension_loaded('pdo_mysql') ? array_filter([
+            PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+        ]) : [],
+    ];
+}
 
 return [
 
@@ -51,31 +76,7 @@ return [
         ],
 
         'mysql' => [
-            'driver'    => 'mysql',
-            'host'      => $host,
-            'database'  => $database,
-            'username'  => $username,
-            'password'  => $password,
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix'    => '',
-//            'driver' => 'mysql',
-//            'url' => env('DATABASE_URL'),
-//            'host' => env('DB_HOST', '127.0.0.1'),
-//            'port' => env('DB_PORT', '3306'),
-//            'database' => env('DB_DATABASE', 'forge'),
-//            'username' => env('DB_USERNAME', 'forge'),
-//            'password' => env('DB_PASSWORD', ''),
-//            'unix_socket' => env('DB_SOCKET', ''),
-//            'charset' => 'utf8mb4',
-//            'collation' => 'utf8mb4_unicode_ci',
-//            'prefix' => '',
-//            'prefix_indexes' => true,
-//            'strict' => true,
-//            'engine' => null,
-//            'options' => extension_loaded('pdo_mysql') ? array_filter([
-//                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-//            ]) : [],
+            $data
         ],
 
         'pgsql' => [
