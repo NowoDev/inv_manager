@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
 use App\Http\Resources\InventoryResource;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Auth\Access\AuthorizationException;
 use App\Http\Resources\InventoryResourceCollection;
 
 class InventoryController extends Controller
@@ -26,13 +26,16 @@ class InventoryController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created inventory in storage.
      *
      * @param Request $request
      * @return JsonResponse|InventoryResource
+     * @throws AuthorizationException
      */
     public function store(Request $request): JsonResponse|InventoryResource
     {
+        $this->authorize('create', Inventory::class);
+
         $input = $request->all();
         $validator = Validator::make($input, [
             'name' => 'required|unique:inventories,name',
@@ -61,7 +64,7 @@ class InventoryController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified inventory.
      *
      * @param $id
      * @return InventoryResource|JsonResponse
@@ -81,14 +84,17 @@ class InventoryController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified inventory in storage.
      *
      * @param Request $request
      * @param Inventory $inventory
      * @return JsonResponse|InventoryResource
+     * @throws AuthorizationException
      */
     public function update(Request $request, Inventory $inventory): JsonResponse|InventoryResource
     {
+        $this->authorize('update', $inventory);
+
         $input = $request->all();
         $validator = Validator::make($input, [
             'name' => 'required|unique:inventories,name',
@@ -112,13 +118,16 @@ class InventoryController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified inventory from storage.
      *
      * @param Inventory $inventory
      * @return JsonResponse
+     * @throws AuthorizationException
      */
     public function destroy(Inventory $inventory): JsonResponse
     {
+        $this->authorize('delete', $inventory);
+
         $inventory->delete();
 
         return response()->json([
