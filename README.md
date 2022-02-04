@@ -8,17 +8,17 @@
 
 Clone the repo
 
-`git clone https://github.com/NowoDev/inv_manager.git`
+    git clone https://github.com/NowoDev/inv_manager.git
 
 Navigate into the folder `inv_manager`
 
 Run the migrations and seed the database
 
-`php artisan migrate --seed`
+    php artisan migrate --seed
 
 Serve the project locally
 
-`php artisan serve`
+    php artisan serve
 
 ## Usage
 
