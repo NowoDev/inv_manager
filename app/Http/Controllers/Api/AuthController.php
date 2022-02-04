@@ -18,6 +18,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
             'confirm_password' => 'required|same:password',
+            'role' => 'nullable|in:Guest,Admin'
         ]);
 
         if ($validator->fails()) {
