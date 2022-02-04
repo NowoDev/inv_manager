@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 if (env('APP_ENV') === 'production') {
     $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
     $data = [
-        'driver' => 'mysql',
         'host' => $url["host"],
         'username' => $url["user"],
         'password' => $url["pass"],
