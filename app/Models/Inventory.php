@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @method static get()
+ * @method static create(array $input)
  */
 class Inventory extends Model
 {

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
 use App\Http\Resources\InventoryResource;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\InventoryResourceCollection;
 
 class InventoryController extends Controller
@@ -26,12 +28,36 @@ class InventoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse|InventoryResource
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse|InventoryResource
     {
-        //
+        $input = $request->all();
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:inventories,name',
+            'price' => 'integer|required',
+            'quantity' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status_code' => 401,
+                'message' => 'Error Validation',
+                'data' => [
+                    $validator->errors()
+                ],
+            ]);
+        }
+
+        $inventory = Inventory::create($input);
+
+        return new InventoryResource($inventory);
+//        return response()->json([
+//            'status_code' => 201,
+//            'data' => [new InventoryResource($inventory)],
+//            'message' => 'Added to Inventory',
+//        ]);
     }
 
     /**
