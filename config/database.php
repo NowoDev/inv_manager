@@ -4,13 +4,12 @@ use Illuminate\Support\Str;
 
 
 if (env('APP_ENV') === 'production') {
-    $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-    $host = $url["host"];
-    $username = $url["user"];
-    $password = $url["pass"];
-    $database = substr($url["path"], 1);
+    $db_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+    $host = $db_url["host"];
+    $username = $db_url["user"];
+    $password = $db_url["pass"];
+    $database = substr($db_url["path"], 1);
 } else {
-    $url = env('DATABASE_URL');
     $host = env('DB_HOST', '127.0.0.1');
     $username = env('DB_USERNAME', 'forge');
     $database = env('DB_DATABASE', 'forge');
@@ -60,7 +59,7 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => $url,
+            'url' => env('DATABASE_URL'),
             'host' => $host,
             'username' => $username,
             'database' => $database,
