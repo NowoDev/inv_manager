@@ -34,7 +34,7 @@ class InventoryController extends Controller
     public function store(Request $request): JsonResponse|InventoryResource
     {
         $input = $request->all();
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($input, [
             'name' => 'required|unique:inventories,name',
             'price' => 'integer|required',
             'quantity' => 'required|integer',
@@ -90,7 +90,7 @@ class InventoryController extends Controller
     public function update(Request $request, Inventory $inventory): JsonResponse|InventoryResource
     {
         $input = $request->all();
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($input, [
             'name' => 'required|unique:inventories,name',
             'price' => 'integer|required',
             'quantity' => 'required|integer',
@@ -114,11 +114,16 @@ class InventoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Inventory $inventory
-     * @return \Illuminate\Http\Response
+     * @param Inventory $inventory
+     * @return JsonResponse
      */
-    public function destroy(Inventory $inventory)
+    public function destroy(Inventory $inventory): JsonResponse
     {
-        //
+        $inventory->delete();
+
+        return response()->json([
+            'status' => 'OK',
+            'message' => 'Inventory Deleted'
+        ]);
     }
 }
