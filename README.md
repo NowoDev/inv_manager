@@ -1,66 +1,98 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
-
 <p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+
+# Favour's Inventory Manager
+
 </p>
 
-## About Laravel
+## Installation
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Clone the repo
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+`git clone https://github.com/NowoDev/inv_manager.git`
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Navigate into the folder `inv_manager`
 
-## Learning Laravel
+Run the migrations and seed the database
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+`php artisan migrate --seed`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Serve the project locally
 
-## Laravel Sponsors
+`php artisan serve`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Usage
 
-### Premium Partners
+#### Note that only authenticated users can perform any operation, no matter how basic.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[CMS Max](https://www.cmsmax.com/)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-- **[Romega Software](https://romegasoftware.com)**
+### Authentication Endpoints
 
-## Contributing
+```  
+    [POST] Register:                    /api/register
+    [POST] Login:                       /api/login
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+The registration endpoint accepts 5 values:
 
-## Code of Conduct
+```
+    name,                               // string
+    email,                              // email
+    password,                           // var_char
+    confirm_password,                   // var_char
+    role                                // 'Admin' or 'Guest'  
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The login endpoint accepts 2 values:
 
-## Security Vulnerabilities
+```
+    email, 
+    password
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Upon Registration or Login, a JWT is generated and this can be used in Postman to test each inventory endpoint
 
-## License
+### Inventory Endpoints
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```
+    [POST] Create:                      /api/inventory
+    [GET] Fetch/Read All Inventory:     /api/inventory
+    [GET] Fetch/Read Single Inventory:  /api/inventory/{id}
+    [PUT] Update Inventory:             /api/inventory/{id}?name=$name&price=$price&quantity=$quantity
+    [DEL] Delete Inventory:             /api/inventory/{id}
+```
+
+The `CREATE`, and `UPDATE` endpoints accept 3 values:
+
+```
+    name,                               // string
+    price,                              // integer
+    quantity,                           // integer
+```
+
+Only the `Admin` can `CREATE`, `READ/VIEW`, `EDIT/UPDATE`, and `DELETE` an inventory while `Guests` can only `READ/VIEW`
+an inventory.
+
+### Cart Endpoint
+
+```
+    [POST] Add Item to Cart             /api/cart/{inventory_id}
+```
+
+The Cart endpoint also accepts 3 values:
+
+```
+    user_id,                             // string
+    inventory_id,                        // integer
+    quantity,                            // integer
+```
+
+The `user_id` is gotten from the authenticated user while the `inventory_id` is gotten from the url. Thus, the quantity
+is the only required value. When an item is added to the cart, the new quantity of that item is updated in the
+inventory.
+
+## Testing in Postman
+
+This project is also hosted on heroku and the endpoints can be tested in postman
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/15465737-da43f176-f364-438a-a390-329347ec70dc?action=collection%2Ffork&collection-url=entityId%3D15465737-da43f176-f364-438a-a390-329347ec70dc%26entityType%3Dcollection%26workspaceId%3D1ee86239-a553-49d1-9d86-ca953566ed4f)
+
+[Docs](https://documenter.getpostman.com/view/15465737/UVeGqR4L#d8f8c297-0f5b-4945-bfc7-290b6008a067)
