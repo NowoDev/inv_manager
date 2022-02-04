@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @method static get()
  * @method static create(array $input)
+ * @method static find($id)
  */
 class Inventory extends Model
 {

@@ -63,12 +63,21 @@ class InventoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Inventory $inventory
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return InventoryResource|JsonResponse
      */
-    public function show(Inventory $inventory)
+    public function show($id): InventoryResource|JsonResponse
     {
-        //
+        $inventory = Inventory::find($id);
+
+        if (is_null($inventory)) {
+            return response()->json([
+                'status_code' => 404,
+                'message' => 'Inventory Doesn\'t Exist',
+            ]);
+        }
+
+        return new InventoryResource($inventory);
     }
 
     /**
