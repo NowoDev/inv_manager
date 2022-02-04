@@ -6,11 +6,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property mixed $id
- * @property mixed $name
- * @property mixed $price
+ * // * @property mixed $inventory
  * @property mixed $quantity
+ * @property mixed $inventory_id
+ * @property mixed $user_id
  */
-class InventoryResource extends JsonResource
+class CartResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -22,8 +23,9 @@ class InventoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'price' => $this->price,
+            'user_id' => $this->user_id,
+//            'inventory_id' => InventoryResource::collection($this->inventory->id),
+            'inventory_id' => $this->inventory_id,
             'quantity' => $this->quantity,
         ];
     }
