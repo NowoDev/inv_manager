@@ -24,6 +24,7 @@ Route::post('login', [AuthController::class, 'login']);
 //});
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('cart/{id}', [CartController::class, 'view']);
     Route::post('cart/{id}', [CartController::class, 'add']);
     Route::resource('inventory', InventoryController::class);
 });

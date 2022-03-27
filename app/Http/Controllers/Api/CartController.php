@@ -46,4 +46,28 @@ class CartController extends Controller
 
         return new CartResource($cart);
     }
+
+    public function view($id)
+    {
+        $cart = Cart::with('user', 'inventory')->find($id);
+
+        if (is_null($cart)) {
+            return response()->json([
+                'status_code' => 404,
+                'message' => 'Cart Doesn\'t Exist',
+            ]);
+        }
+
+        return response()->json([
+            'status_code' => 200,
+            'message' => 'Cart Details',
+            'data' => [
+                'id' => $cart->id,
+                'user' => $cart->user,
+                'inventory' => $cart->inventory,
+                'quantity' => $cart->quantity,
+            ],
+
+        ]);
+    }
 }
