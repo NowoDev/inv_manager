@@ -54,6 +54,7 @@ class CartController extends Controller
         if (is_null($cart)) {
             return response()->json([
                 'status_code' => 404,
+                'status' => 'Error',
                 'message' => 'Cart Doesn\'t Exist',
             ]);
         }
