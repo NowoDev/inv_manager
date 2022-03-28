@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CartResource;
+use App\Http\Resources\AllCartResource;
+use App\Http\Resources\AllCartResourceCollection;
 
 class CartController extends Controller
 {
@@ -47,6 +49,20 @@ class CartController extends Controller
         return new CartResource($cart);
     }
 
+    public function viewAll()
+    {
+        $cart = Cart::with('user', 'inventory')->get();
+
+        if (is_null($cart)) {
+            return response()->json([
+                'status_code' => 404,
+                'message' => 'Cart Doesn\'t Exist',
+            ]);
+        }
+
+        return new AllCartResourceCollection($cart);
+    }
+
     public function view($id)
     {
         $cart = Cart::with('user', 'inventory')->find($id);
@@ -59,16 +75,6 @@ class CartController extends Controller
             ]);
         }
 
-        return response()->json([
-            'status_code' => 200,
-            'message' => 'Cart Details',
-            'data' => [
-                'id' => $cart->id,
-                'user' => $cart->user,
-                'inventory' => $cart->inventory,
-                'quantity' => $cart->quantity,
-            ],
-
-        ]);
+        return new AllCartResource($cart);
     }
 }
