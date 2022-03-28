@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\InventoryController;
 |
 */
 
+Route::view('/', 'welcome');
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
