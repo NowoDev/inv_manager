@@ -5,26 +5,29 @@ namespace App\Http\Controllers\Api;
 use App\Models\Cart;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CartResource;
-use App\Http\Resources\AllCartResource;
-use App\Http\Resources\AllCartResourceCollection;
+use App\Http\Resources\CartResourceCollection;
 
 class CartController extends Controller
 {
-    /**
-     * add inventory to cart.
-     *
-     * @param Request $request
-     * @param $id
-     * @return JsonResponse|CartResource
-     */
-    public function add(Request $request, $id): JsonResponse|CartResource
+    public function index()
     {
-        $input = $request->all();
+        $cart = Cart::with('user', 'inventory')->get();
 
-        $quantity = $input['quantity'];
+        if (is_null($cart)) {
+            return response()->json([
+                'status_code' => 404,
+                'message' => 'Cart Doesn\'t Exist',
+            ]);
+        }
+
+        return new CartResourceCollection($cart);
+    }
+
+    public function store(Request $request)
+    {
+        $quantity = $request['quantity'];
         $inventory = Inventory::find($id);
 
         if ($quantity > $inventory->quantity) {
@@ -49,21 +52,7 @@ class CartController extends Controller
         return new CartResource($cart);
     }
 
-    public function viewAll()
-    {
-        $cart = Cart::with('user', 'inventory')->get();
-
-        if (is_null($cart)) {
-            return response()->json([
-                'status_code' => 404,
-                'message' => 'Cart Doesn\'t Exist',
-            ]);
-        }
-
-        return new AllCartResourceCollection($cart);
-    }
-
-    public function view($id)
+    public function show($id)
     {
         $cart = Cart::with('user', 'inventory')->find($id);
 
@@ -75,6 +64,16 @@ class CartController extends Controller
             ]);
         }
 
-        return new AllCartResource($cart);
+        return new CartResource($cart);
+    }
+
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    public function destroy($id)
+    {
+        //
     }
 }

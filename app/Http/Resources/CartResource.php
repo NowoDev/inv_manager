@@ -2,30 +2,21 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/**
- * @property mixed $id
- * // * @property mixed $inventory
- * @property mixed $quantity
- * @property mixed $inventory_id
- * @property mixed $user_id
- */
 class CartResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     * @param Request $request
+     * @return array
      */
     public function toArray($request)
     {
         return [
             'id' => $this->id,
-            'user_id' => $this->user_id,
-//            'inventory_id' => InventoryResource::collection($this->inventory->id),
-            'inventory_id' => $this->inventory_id,
+            'user' => $this->user,
+            'inventory' => $this->inventory,
             'quantity' => $this->quantity,
         ];
     }
@@ -33,7 +24,8 @@ class CartResource extends JsonResource
     public function with($request)
     {
         return [
-            'status' => 'OK',
+            'status_code' => 200,
+            'status' => 'Success',
         ];
     }
 }
